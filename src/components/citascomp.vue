@@ -41,7 +41,6 @@
             <th>{{ imagen.cita_id }}</th>
             <td>{{ imagen.fecha }}</td>
             <td>{{ imagen.hora_id }}</td>
-            <!-- <td>{{ imagen.lugar }}</td> -->
             <td>
               <input type="button" value="eliminar" class="btn btn-secondary" @click="eliminarcita(imagen.cita_id)">
             </td>
@@ -127,7 +126,6 @@ export default {
         });
         return;
       }
-
       axios
         .post('http://localhost:4000/citas1/', this.tiempo_cita)
         .then((response) => {
@@ -152,12 +150,8 @@ export default {
         });
     },
     guardarLimite() {
-
       console.log('Límite de citas:', this.limiteCitas);
     },
-
-
-
   }
 }
 </script>

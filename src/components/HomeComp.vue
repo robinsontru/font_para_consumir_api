@@ -95,6 +95,9 @@
                         <li class="nav-item">
                             <router-link to="/agregar   " class="nav-link click-scroll">agregar </router-link>
                         </li>
+                        <li class="nav-item">
+                            <router-link to="/citas  " class="nav-link click-scroll">citas </router-link>
+                        </li>
                     </ul>
                     <!--BOTON INICIO DE SESION Y NODAL -->
                     <button type="button" class="btn btn-outline-success ms-1 btn-bd-primary    " data-bs-toggle="modal"

@@ -10,6 +10,7 @@ import ComentariosView from  '../views/ComentariosView.vue'
 import AgendacitaView from  '../views/AgendacitaView.vue'
 import Eventosview from '../views/EventosView.vue';
 import Agregarview from '../views/agregarView.vue';
+import citasView from '../views/citasView.vue';
 
 const routes = [
 
@@ -66,7 +67,11 @@ const routes = [
     name: 'agregar',
     component: Agregarview
   },
- 
+  {
+    path: '/citas',
+    name: 'citas',
+    component:citasView
+  },
   
  
 ]
