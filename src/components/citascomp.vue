@@ -1,28 +1,18 @@
 <template>
-  <div>
+  <!-- <div>
     <h2>Calendario</h2>
     <hr>
-    <div>
-      <label for="limite-citas">Tamaño de citas:</label>
-      <input type="number" id="limite-citas" v-model="limiteCitas" />
-    </div>
+
     <hr>
 
     <div class="date-picker">
       <label for="start-date">Fecha de cita:</label>
       <input type="date" id="start-date" v-model="tiempo_cita.fecha" @change="updateEndDate" />
       <input type="time" v-model="tiempo_cita.hora_id" />
-      <!-- <textarea class="form-control" v-model="newcomen.comentario">Comentario</textarea>
-       -->
     </div>
-    <!-- <div class="date-picker">
-      <label for="end-date">Fecha de fin:</label>
-      <input type="date" id="end-date" v-model="endDate" :min="startDate" />
-      <input type="time" v-model="startTime" />
-    </div> -->
     <button @click="postcomentarios">Guardar</button>
   </div>
-  <!-- // -->
+
   <div>
     <div class="container">
       <table class="table">
@@ -31,7 +21,7 @@
             <th scope="col">Id</th>
             <th scope="col">fecha</th>
             <th scope="col">hora</th>
-            <!-- <th scope="col">lugar</th> -->
+
             <th scope="col">Eliminar cita</th>
             <th scope="col">Aceptar cita</th>
           </tr>
@@ -51,108 +41,103 @@
         </tbody>
       </table>
     </div>
+  </div> -->
+  <div>
+
   </div>
 </template>
 <script>
-import axios from "axios";
+// import axios from "axios";
 export default {
-  name: "HOLA",
-  data() {
-    return {
-      tiempo_cita: {
-        fecha: '',
-        hora_id: ''
-      },
-      imagenes: '',
-      horasAgendadas: []
-    };
-  },
-  mounted() {
-    this.getuser();
-  },
-  methods: {
-    async getuser() {
-      await this.axios
-        .get("http://localhost:4000/citas/")
-        .then((response) => {
-          this.imagenes = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-    async eliminarcita(cita_id) {
-      await axios.delete('http://localhost:4000/citas/' + cita_id)
-        .then((response) => {
-          console.log(response);
-          this.$swal.fire({
-            position: "top-center",
-            icon: "success",
-            title: "evento eliminado correctamente.",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
-    },
-    async aprovarcita(cita_id) {
-      await axios.delete('http://localhost:4000/citas/' + cita_id)
-        .then((response) => {
-          console.log(response);
-          this.$swal.fire({
-            position: "top-center",
-            icon: "success",
-            title: "evento confirmado eliminado correctamente.",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
-    },
-    postcomentarios() {
-      if (this.horasAgendadas.includes(this.tiempo_cita.hora_id)) {
-        this.$swal.fire({
-          icon: 'warning',
-          title: 'Hora no disponible',
-          text: 'La hora seleccionada ya está agendada. Por favor, elija otra hora.',
-        });
-        return;
-      }
-      const limiteCitas = this.limiteCitas;
-      if (this.imagenes.length >= limiteCitas) {
-        this.$swal.fire({
-          icon: 'warning',
-          title: 'Límite de citas alcanzado',
-          text: 'Se ha alcanzado el límite de citas permitidas.',
-        });
-        return;
-      }
-      axios
-        .post('http://localhost:4000/citas1/', this.tiempo_cita)
-        .then((response) => {
-          console.log(response.data);
-          console.log('Fecha de inicio:', this.tiempo_cita);
-          this.horasAgendadas.push(this.tiempo_cita.hora_id);
-          this.$swal.fire({
-            position: 'top-center',
-            icon: 'success',
-            title: 'Comentario creado correctamente.',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-          this.$swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'No se pudo crear la cita correctamente.',
-          });
-        });
-    },
-    guardarLimite() {
-      console.log('Límite de citas:', this.limiteCitas);
-    },
-  }
+ name: "HOLA",
+  // data() {
+  //   return {
+  //     tiempo_cita: {
+  //       fecha: '',
+  //       hora_id: ''
+  //     },
+  //     imagenes: '',
+  //     horasAgendadas: []
+  //   };
+  // },
+  // mounted() {
+  //   this.getuser();
+  // },
+  // methods: {
+  //   async getuser() {
+  //     await this.axios
+  //       .get("http://localhost:4000/citas/")
+  //       .then((response) => {
+  //         this.imagenes = response.data;
+  //         console.log(response.data);
+  //       })
+  //       .catch((e) => {
+  //         console.log(e);
+  //       });
+  //   },
+  //   async eliminarcita(cita_id) {
+  //     await axios.delete('http://localhost:4000/citas/' + cita_id)
+  //       .then((response) => {
+  //         console.log(response);
+  //         this.$swal.fire({
+  //           position: "top-center",
+  //           icon: "success",
+  //           title: "evento eliminado correctamente.",
+  //           showConfirmButton: false,
+  //           timer: 1500,
+  //         });
+  //       })
+  //   },
+  //   async aprovarcita(cita_id) {
+  //     await axios.delete('http://localhost:4000/citas/' + cita_id)
+  //       .then((response) => {
+  //         console.log(response);
+  //         this.$swal.fire({
+  //           position: "top-center",
+  //           icon: "success",
+  //           title: "evento confirmado eliminado correctamente.",
+  //           showConfirmButton: false,
+  //           timer: 1500,
+  //         });
+  //       })
+  //   },
+  //   postcomentarios() {
+  //     if (this.horasAgendadas.includes(this.tiempo_cita.hora_id)) {
+  //       this.$swal.fire({
+  //         icon: 'warning',
+  //         title: 'Hora no disponible',
+  //         text: 'La hora seleccionada ya está agendada. Por favor, elija otra hora.',
+  //       });
+  //       return;
+
+    
+  //     }
+  //     axios
+  //       .post('http://localhost:4000/citas1/', this.tiempo_cita)
+  //       .then((response) => {
+  //         console.log(response.data);
+  //         console.log('Fecha de inicio:', this.tiempo_cita);
+  //         this.horasAgendadas.push(this.tiempo_cita.hora_id);
+  //         this.$swal.fire({
+  //           position: 'top-center',
+  //           icon: 'success',
+  //           title: 'Comentario creado correctamente.',
+  //           showConfirmButton: false,
+  //           timer: 1500,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error(error);
+  //         this.$swal.fire({
+  //           icon: 'error',
+  //           title: 'Oops...',
+  //           text: 'No se pudo crear la cita correctamente.',
+  //         });
+  //       });
+  //   }, 
+  // },
+
+
 }
 </script>
 <style scoped>

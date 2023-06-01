@@ -2,27 +2,15 @@
   <div>
     <h2>Calendario</h2>
     <hr>
-    <div>
-      <label for="limite-citas">Tamaño de citas:</label>
-      <input type="number" id="limite-citas" v-model="limiteCitas" />
-    </div>
-    <hr>
-
     <div class="date-picker">
       <label for="start-date">Fecha de cita:</label>
       <input type="date" id="start-date" v-model="tiempo_cita.fecha" @change="updateEndDate" />
       <input type="time" v-model="tiempo_cita.hora_id" />
-      <!-- <textarea class="form-control" v-model="newcomen.comentario">Comentario</textarea>
-       -->
+      <input type="text" v-model="tiempo_cita.descripcion" />
     </div>
-    <!-- <div class="date-picker">
-      <label for="end-date">Fecha de fin:</label>
-      <input type="date" id="end-date" v-model="endDate" :min="startDate" />
-      <input type="time" v-model="startTime" />
-    </div> -->
-    <button @click="postcomentarios">Guardar</button>
+    <button @click="postComentarios">Guardar</button>
   </div>
-  <!-- // -->
+
   <div>
     <div class="container">
       <table class="table">
@@ -31,7 +19,7 @@
             <th scope="col">Id</th>
             <th scope="col">fecha</th>
             <th scope="col">hora</th>
-            <!-- <th scope="col">lugar</th> -->
+            <th scope="col">descripcion</th>
             <th scope="col">Eliminar cita</th>
             <th scope="col">Aceptar cita</th>
           </tr>
@@ -41,12 +29,39 @@
             <th>{{ imagen.cita_id }}</th>
             <td>{{ imagen.fecha }}</td>
             <td>{{ imagen.hora_id }}</td>
-            <!-- <td>{{ imagen.lugar }}</td> -->
+            <td>{{ imagen.descripcion }}</td>
             <td>
-              <input type="button" value="eliminar" class="btn btn-secondary" @click="eliminarcita(imagen.cita_id)">
+              <input type="button" value="eliminar" class="btn btn-secondary" @click="eliminarCita(imagen.cita_id)">
             </td>
             <td>
-              <input type="button" value="aceptar" class="btn btn-danger" @click="aprovarcita(imagen.cita_id)">
+              <button type="button" @click="openModal(imagen)" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                reseña
+              </button>
+              <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" :class='{ show: modal }'
+                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">{{ titleModal }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div>
+                        <label for="descripcion">
+                          <input type="text" v-model="tiempo_cita.descripcion" />
+                        </label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button @click="closeModal()" type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cerrar</button>
+                      <button @click="guardarResena(imagen.cita_id)" type="button" class="btn btn-primary">Guardar
+                        reseña</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -54,6 +69,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 export default {
@@ -61,11 +77,14 @@ export default {
   data() {
     return {
       tiempo_cita: {
-        fecha: '',
-        hora_id: ''
+        fecha: "",
+        hora_id: "",
+        descripcion: "",
       },
-      imagenes: '',
-      horasAgendadas: []
+      imagenes: [],
+      horasAgendadas: [],
+      titleModal: "",
+      modal: false,
     };
   },
   mounted() {
@@ -73,44 +92,70 @@ export default {
   },
   methods: {
     async getuser() {
-      await this.axios
-        .get("http://localhost:4000/citas/")
-        .then((response) => {
-          this.imagenes = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
+      try {
+        const response = await axios.get("http://localhost:4000/citas/");
+        this.imagenes = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async eliminarCita(cita_id) {
+      try {
+        const response = await axios.delete(`http://localhost:4000/citas/${cita_id}`);
+        if (response.status === 200) {
+          this.$swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: "Evento eliminado correctamente.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          this.getuser(); // Actualizar la lista de citas después de eliminar una
+        }
+      } catch (error) {
+        console.error(error);
+        this.$swal.fire({
+          position: "top-center",
+          icon: "error",
+          title: "Error al eliminar el evento.",
+          showConfirmButton: false,
+          timer: 1500,
         });
+      }
     },
-    async eliminarcita(cita_id) {
-      await axios.delete('http://localhost:4000/citas/' + cita_id)
-        .then((response) => {
-          console.log(response);
+    async guardarResena(cita_id) {
+      try {const response = await axios.put(`http://localhost:4000/citas/${cita_id}`, this.tiempo_cita);
+        if (response.status === 200) {
           this.$swal.fire({
             position: "top-center",
             icon: "success",
-            title: "evento eliminado correctamente.",
+            title: "Evento editado correctamente.",
             showConfirmButton: false,
             timer: 1500,
           });
-        })
+          this.getuser();
+          this.closeModal();
+        }
+      } catch (error) {
+        console.error(error);
+        this.$swal.fire({
+          position: "top-center",
+          icon: "error",
+          title: "Error al editar el evento.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
     },
-    async aprovarcita(cita_id) {
-      await axios.delete('http://localhost:4000/citas/' + cita_id)
-        .then((response) => {
-          console.log(response);
-          this.$swal.fire({
-            position: "top-center",
-            icon: "success",
-            title: "evento confirmado eliminado correctamente.",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
+    openModal(imagen) {
+      this.tiempo_cita.descripcion = imagen.descripcion;
+      this.modal = true;
     },
-    postcomentarios() {
-      if (this.horasAgendadas.includes(this.tiempo_cita.hora_id)) {
+    closeModal() {
+      this.modal = false;
+    },
+    postComentarios() {
+      if(this.horasAgendadas.includes(this.tiempo_cita.hora_id)) {
         this.$swal.fire({
           icon: 'warning',
           title: 'Hora no disponible',
@@ -127,9 +172,7 @@ export default {
         });
         return;
       }
-
-      axios
-        .post('http://localhost:4000/citas1/', this.tiempo_cita)
+      axios.post('http://localhost:4000/citas/', this.tiempo_cita)
         .then((response) => {
           console.log(response.data);
           console.log('Fecha de inicio:', this.tiempo_cita);
@@ -141,6 +184,7 @@ export default {
             showConfirmButton: false,
             timer: 1500,
           });
+          this.getuser();
         })
         .catch((error) => {
           console.error(error);
@@ -150,16 +194,10 @@ export default {
             text: 'No se pudo crear la cita correctamente.',
           });
         });
+       
     },
-    guardarLimite() {
-
-      console.log('Límite de citas:', this.limiteCitas);
-    },
-
-
-
-  }
-}
+  },
+};
 </script>
 <style scoped>
 .container {
